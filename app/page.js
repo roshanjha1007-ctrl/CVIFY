@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import ResultCard from '@/components/ResultCard'
+import VersionComparison from '@/components/VersionComparison'
 
 export default function Home() {
   const [resumeText, setResumeText] = useState('')
@@ -10,6 +11,7 @@ export default function Home() {
   const [error, setError] = useState('')
   const [sharing, setSharing] = useState(false)
   const [shareUrl, setShareUrl] = useState('')
+  const [versions, setVersions] = useState([])
 
   async function handleRoast() {
     if (!resumeText.trim()) {
@@ -61,6 +63,11 @@ export default function Home() {
     }
   }
 
+  function saveVersion() {
+    if (!result) return
+    setVersions(prev => [...prev, { result, brutal, savedAt: new Date().toLocaleTimeString() }])
+  }
+
   return (
     <main className="min-h-screen" style={{ background: 'var(--bg)' }}>
       {/* Header */}
@@ -79,11 +86,6 @@ export default function Home() {
             AI Resume Roaster
           </span>
         </div>
-        <a href="https://github.com" target="_blank" rel="noopener noreferrer"
-          className="text-xs transition-colors hover:opacity-80"
-          style={{ color: 'var(--text-dim)' }}>
-          GitHub ↗
-        </a>
       </header>
 
       <div className="max-w-2xl mx-auto px-4 py-10 space-y-6">
@@ -175,12 +177,31 @@ export default function Home() {
 
         {/* Result */}
         {result && (
-          <ResultCard
-            result={result}
-            brutal={brutal}
-            onShare={handleShare}
-            sharing={sharing}
-            shareUrl={shareUrl}
+          <>
+            <div className="flex justify-end">
+              <button
+                onClick={saveVersion}
+                className="text-xs px-4 py-2 rounded-lg transition-all hover:opacity-80"
+                style={{ background: 'var(--bg-card)', color: 'var(--text-muted)', border: '1px solid var(--border)' }}>
+                + Save as Version {versions.length + 1}
+              </button>
+            </div>
+
+            <ResultCard
+              result={result}
+              brutal={brutal}
+              onShare={handleShare}
+              sharing={sharing}
+              shareUrl={shareUrl}
+            />
+          </>
+        )}
+
+        {/* Version Comparison */}
+        {versions.length > 1 && (
+          <VersionComparison
+            versions={versions}
+            onClear={() => setVersions([])}
           />
         )}
 

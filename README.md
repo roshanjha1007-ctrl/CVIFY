@@ -21,15 +21,15 @@ CVIFY sends your resume to an AI (acting as an ATS + hiring manager) and returns
 
 ## Features
 
-- ✅ Resume paste + AI roast
-- ✅ Score ring with color-coded rating
-- ✅ Brutal Mode toggle (harsher feedback)
-- ✅ Anonymous shareable links (`/r/{id}`)
-- ✅ MongoDB storage (Azure Cosmos DB compatible)
-- ✅ Mock mode — works with zero API keys
-- ✅ Clean dark UI with custom fonts
-- ✅ Loading + error states
-- ✅ Input validation
+- Resume paste + AI roast
+- Score ring with color-coded rating
+- Brutal Mode toggle (harsher feedback)
+- Anonymous shareable links (`/r/{id}`)
+- MongoDB storage (Azure Cosmos DB compatible)
+- Mock mode — works with zero API keys
+- Clean dark UI with custom fonts
+- Loading + error states
+- Input validation
 
 ---
 
@@ -158,16 +158,3 @@ For database, use [MongoDB Atlas](https://www.mongodb.com/atlas) free tier or Az
 - [ ] Multiple resume versions comparison
 
 ---
-
-## AI Prompt Used
-
-```
-You are an ATS + hiring manager.
-Return ONLY JSON:
-{score, verdict, issues[5], fixes[5], rewrites[3]}
-Rules: concise, measurable impact, no fluff.
-```
-
----
-
-Made with 🔥 by Roshan — CSIT student, builder, hackathon participant.
