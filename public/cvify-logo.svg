@@ -1,0 +1,42 @@
+<svg width="452" height="132" viewBox="0 0 452 132" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="frame" x1="18" y1="14" x2="74" y2="84" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFA31A"/>
+      <stop offset="0.52" stop-color="#FF6B1A"/>
+      <stop offset="1" stop-color="#FF2D1A"/>
+    </linearGradient>
+    <linearGradient id="check" x1="31" y1="54" x2="71" y2="82" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF7A18"/>
+      <stop offset="1" stop-color="#FF3B1A"/>
+    </linearGradient>
+    <linearGradient id="word" x1="112" y1="34" x2="390" y2="92" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4F4F4"/>
+      <stop offset="1" stop-color="#C8CCD1"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(0 12)">
+    <circle cx="13" cy="35" r="4" fill="#FF861A"/>
+    <circle cx="13" cy="52" r="4" fill="#FF6D1A"/>
+    <circle cx="13" cy="69" r="4" fill="#FF481A"/>
+    <path d="M17 35H30" stroke="url(#frame)" stroke-width="4" stroke-linecap="round"/>
+    <path d="M17 52H24" stroke="url(#frame)" stroke-width="4" stroke-linecap="round"/>
+    <path d="M17 69H22" stroke="url(#frame)" stroke-width="4" stroke-linecap="round"/>
+    <path d="M31 18H69V65L55 78H31V18Z" fill="#0A0A0A" stroke="url(#frame)" stroke-width="4"/>
+    <path d="M56 18V31H69" stroke="url(#frame)" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M39 38H57" stroke="url(#frame)" stroke-width="4" stroke-linecap="round"/>
+    <path d="M39 50H57" stroke="url(#frame)" stroke-width="4" stroke-linecap="round"/>
+    <path d="M39 62H50" stroke="url(#frame)" stroke-width="4" stroke-linecap="round"/>
+    <path d="M38 60L49 71L75 38" stroke="url(#check)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <text
+    x="112"
+    y="88"
+    fill="url(#word)"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="86"
+    font-weight="800"
+    letter-spacing="-4"
+  >CVIFY</text>
+</svg>

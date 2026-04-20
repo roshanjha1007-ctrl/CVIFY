@@ -1,4 +1,5 @@
 'use client'
+import { ChevronRight, Copy, Share2 } from 'lucide-react'
 import ScoreRing from './ScoreRing'
 
 function Section({ title, items, accent }) {
@@ -17,7 +18,7 @@ function Section({ title, items, accent }) {
       <ul className="space-y-2">
         {items.map((item, i) => (
           <li key={i} className="flex gap-2 text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-            <span className={cls.split(' ')[0]} style={{ flexShrink: 0, marginTop: '2px' }}>▸</span>
+            <ChevronRight size={16} className={cls.split(' ')[0]} style={{ flexShrink: 0, marginTop: '2px' }} />
             <span>{item}</span>
           </li>
         ))}
@@ -89,8 +90,9 @@ export default function ResultCard({ result, brutal, onShare, sharing, shareUrl 
               </code>
               <button
                 onClick={() => navigator.clipboard.writeText(shareUrl)}
-                className="px-3 py-2 rounded text-xs font-semibold transition-all hover:opacity-80"
+                className="px-3 py-2 rounded text-xs font-semibold transition-all hover:opacity-80 inline-flex items-center gap-2"
                 style={{ background: '#ff4d0022', color: '#ff4d00', border: '1px solid #ff4d0044' }}>
+                <Copy size={14} />
                 Copy
               </button>
             </div>
@@ -106,9 +108,10 @@ export default function ResultCard({ result, brutal, onShare, sharing, shareUrl 
             <button
               onClick={onShare}
               disabled={sharing}
-              className="px-4 py-2 rounded text-sm font-semibold transition-all hover:opacity-80 disabled:opacity-40"
+              className="px-4 py-2 rounded text-sm font-semibold transition-all hover:opacity-80 disabled:opacity-40 inline-flex items-center gap-2"
               style={{ background: '#ff4d0022', color: '#ff4d00', border: '1px solid #ff4d0044' }}>
-              {sharing ? 'Saving...' : '↗ Share'}
+              <Share2 size={15} />
+              {sharing ? 'Saving...' : 'Share'}
             </button>
           </div>
         )}

@@ -1,160 +1,156 @@
-# CVIFY — AI Resume Roaster
+# CVify
 
-> Paste your resume. Get brutally honest AI feedback. Share your score.
+![CVify logo](./public/cvify-logo.svg)
 
-Built by **Roshan** — a CSIT student actively shipping real projects.
+CVify is an AI-powered resume optimization and tracking app built with Next.js. It accepts PDF resumes, matches them against job descriptions, simulates LinkedIn consistency checks, stores analysis sessions, and can send a summary report by email.
 
----
+## Core Workflow
 
-## What It Does
-
-CVIFY sends your resume to an AI (acting as an ATS + hiring manager) and returns:
-
-- **Score** (0–100) with a visual ring
-- **Verdict** — one-line brutal truth
-- **5 Issues** — what's killing your chances
-- **5 Fixes** — exactly how to fix them
-- **3 Rewrites** — your weak bullets, improved
-- **Anonymous Share Link** — anyone with the link can view your roast (no personal info exposed)
-
----
+1. Upload one or more resume PDFs, or paste resume text manually.
+2. Paste a target job description.
+3. Optionally add a LinkedIn URL and email address.
+4. CVify parses the resume, scores ATS alignment, highlights missing skills, and stores the session.
+5. Review progress history, compare resume versions, and send reports by email.
 
 ## Features
 
-- Resume paste + AI roast
-- Score ring with color-coded rating
-- Brutal Mode toggle (harsher feedback)
-- Anonymous shareable links (`/r/{id}`)
-- MongoDB storage (Azure Cosmos DB compatible)
-- Mock mode — works with zero API keys
-- Clean dark UI with custom fonts
-- Loading + error states
-- Input validation
+- PDF resume upload with text extraction via `pdf-parse`
+- ATS compatibility scoring from `0-100`
+- Missing and matched skill detection against a job description
+- Resume improvement suggestions and rewrite prompts
+- LinkedIn URL input with simulated profile extraction and consistency checks
+- Email report delivery through `nodemailer`
+- Saved analysis sessions in MongoDB
+- Before/after score tracking with a history chart
+- Multiple resume version comparison
+- Structured JSON analysis output for future AI workflows
 
----
+## Stack
 
-## Tech Stack
+- Next.js 14 App Router
+- React 18
+- MongoDB with Mongoose
+- `pdf-parse` for PDF extraction
+- `nodemailer` for report sending
+- Lucide React for icons
+- Optional Gemini or OpenAI enhancement hooks
 
-| Layer | Tech |
-|---|---|
-| Frontend | Next.js 14 (App Router) |
-| Styling | Tailwind CSS + CSS Variables |
-| AI | Google Gemini / OpenAI / Mock |
-| Database | MongoDB (Mongoose) |
-| Hosting | Vercel (recommended) |
+## Environment Setup
 
----
-
-## Folder Structure
-
-```
-CVIFY/
-├── app/
-│   ├── api/
-│   │   ├── roast/route.js       # POST /api/roast
-│   │   ├── share/route.js       # POST /api/share
-│   │   └── r/[id]/route.js      # GET /api/r/:id
-│   ├── r/[id]/page.js           # Public share page
-│   ├── page.js                  # Home page
-│   ├── layout.js
-│   └── globals.css
-├── components/
-│   ├── ScoreRing.js             # Animated SVG score ring
-│   └── ResultCard.js            # Full result display
-├── lib/
-│   ├── ai.js                    # Gemini / OpenAI / Mock
-│   └── mongodb.js               # DB connection
-├── models/
-│   └── Roast.js                 # Mongoose schema
-├── .env.local.example
-├── package.json
-└── README.md
-```
-
----
-
-## Setup
-
-### 1. Install dependencies
-
-```bash
-npm install
-```
-
-### 2. Configure environment
+Copy the example file:
 
 ```bash
 cp .env.local.example .env.local
 ```
 
-Edit `.env.local`:
+Then configure the values you need:
 
 ```env
 MONGODB_URI=mongodb://localhost:27017/cvify
-GEMINI_API_KEY=your_key_here   # or leave empty for mock mode
+GEMINI_API_KEY=your_gemini_api_key
+OPENAI_API_KEY=your_openai_api_key
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=your_smtp_username
+SMTP_PASS=your_smtp_password
+EMAIL_FROM="CVify <reports@example.com>"
 ```
 
-### 3. Run development server
+Notes:
+
+- `MONGODB_URI` is required for saved sessions and score history.
+- `GEMINI_API_KEY` and `OPENAI_API_KEY` are optional. CVify still works with local heuristic analysis if no provider is configured.
+- SMTP values are optional. Without them, email reports run in simulated mode so the app still works in development.
+
+## Running Locally
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the app:
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+Then open `http://localhost:3000`.
 
----
+## API Surface
 
-## Environment Variables
+### `POST /api/analyze`
 
-| Variable | Required | Description |
-|---|---|---|
-| `MONGODB_URI` | Yes (for share links) | MongoDB or Azure Cosmos DB connection string |
-| `GEMINI_API_KEY` | No | Google Gemini API key (free tier available) |
-| `OPENAI_API_KEY` | No | OpenAI API key (used if no Gemini key) |
+Accepts `multipart/form-data` with:
 
-> ⚠️ If both AI keys are missing, CVIFY runs in **mock mode** — great for development.
+- `resumeFile` for PDF upload
+- `resumeText` as a manual fallback
+- `jobDescription`
+- `linkedInUrl`
+- `email`
+- `versionLabel`
 
----
+Returns:
 
-## Getting a Free Gemini API Key
+- saved session metadata
+- structured analysis JSON
+- email report status
+- recent session history for that email
 
-1. Go to [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
-2. Create a key (free tier: 15 req/min)
-3. Paste it into `.env.local` as `GEMINI_API_KEY`
+### `GET /api/sessions?email=...`
 
----
+Loads saved analysis sessions scoped to the provided email address.
 
-## How Share Links Work
+## Project Structure
 
-1. User clicks **↗ Share** after getting a roast
-2. Frontend calls `POST /api/share` with resume text + result JSON
-3. Server generates a short unique ID and saves to MongoDB
-4. User gets a public URL: `https://yourapp.com/r/{id}`
-5. Anyone visiting that URL sees the roast result — **resume text is never shown**
-6. Documents auto-delete after **30 days**
-
----
-
-## Deploying to Vercel
-
-```bash
-npm install -g vercel
-vercel
+```text
+app/
+  api/
+    analyze/route.js
+    sessions/route.js
+    r/[id]/route.js
+    roast/route.js
+    share/route.js
+  r/[id]/page.js
+  globals.css
+  layout.js
+  page.js
+components/
+  BrandLogo.js
+  ComparisonTable.js
+  HistoryChart.js
+  ScoreRing.js
+  SectionPanel.js
+lib/
+  analysis.js
+  ai.js
+  email.js
+  mongodb.js
+models/
+  AnalysisSession.js
+  Roast.js
+public/
+  cvify-logo.svg
+  cvify-mark.svg
 ```
 
-Set environment variables in the Vercel dashboard under **Settings → Environment Variables**.
+## Security Notes
 
-For database, use [MongoDB Atlas](https://www.mongodb.com/atlas) free tier or Azure Cosmos DB.
+- `.env.local` is ignored by git.
+- The example env file contains placeholders only.
+- If any real API keys were ever committed in the past, rotate them immediately. Ignoring the file now does not protect previously leaked secrets.
+- Session history is scoped by email in the API instead of being returned globally.
 
----
+## Build
 
-## Future Improvements
+```bash
+npm run build
+```
 
-- [ ] PDF resume upload (parse text from PDF)
-- [ ] Job description matching (paste JD + resume → gap analysis)
-- [ ] LinkedIn profile URL input
-- [ ] Email results to yourself
-- [ ] Before/after score tracker
-- [ ] Multiple resume versions comparison
+## Future Extensions
 
----
+- Real LinkedIn enrichment through a compliant third-party provider
+- Fine-tuned AI rewrite generation for role-specific resumes
+- Recruiter-style scorecards per job family
+- Authenticated multi-user dashboards

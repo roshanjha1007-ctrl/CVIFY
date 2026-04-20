@@ -25,7 +25,7 @@ export async function POST(request) {
   } catch (error) {
     console.error('Roast API error:', error)
     return NextResponse.json(
-      { error: 'AI roast failed. Please try again.' },
+      { error: error.message || 'Something went wrong. Please try again.' },
       { status: 500 }
     )
   }

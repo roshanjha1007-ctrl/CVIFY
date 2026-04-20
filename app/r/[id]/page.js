@@ -1,3 +1,5 @@
+import { ArrowLeft, ArrowRight, ChevronRight, Eye, Flame, FileWarning, Trophy } from 'lucide-react'
+import BrandLogo from '@/components/BrandLogo'
 import ScoreRing from '@/components/ScoreRing'
 import connectDB from '@/lib/mongodb'
 import Roast from '@/models/Roast'
@@ -28,7 +30,7 @@ function Section({ title, items, accent }) {
       <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {items.map((item, i) => (
           <li key={i} style={{ display: 'flex', gap: '8px', fontSize: '13px', color: '#666', lineHeight: 1.6 }}>
-            <span style={{ color, flexShrink: 0, marginTop: '2px' }}>▸</span>
+            <ChevronRight size={16} style={{ color, flexShrink: 0, marginTop: '2px' }} />
             <span>{item}</span>
           </li>
         ))}
@@ -44,10 +46,15 @@ export default async function SharedRoast({ params }) {
     return (
       <main style={{ minHeight: '100vh', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'monospace' }}>
         <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '48px', marginBottom: '16px' }}>👻</p>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+            <FileWarning size={40} color="#ff4d00" />
+          </div>
           <h1 style={{ color: '#f0f0f0', fontSize: '20px', marginBottom: '8px' }}>Roast not found</h1>
           <p style={{ color: '#444', fontSize: '14px', marginBottom: '24px' }}>This link may have expired (30 days).</p>
-          <a href="/" style={{ color: '#ff4d00', textDecoration: 'none', fontSize: '14px' }}>← Roast your own resume</a>
+          <a href="/" style={{ color: '#ff4d00', textDecoration: 'none', fontSize: '14px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            <ArrowLeft size={16} />
+            Roast your own resume
+          </a>
         </div>
       </main>
     )
@@ -62,49 +69,55 @@ export default async function SharedRoast({ params }) {
     <main style={{ minHeight: '100vh', background: '#0a0a0a', fontFamily: "'JetBrains Mono', monospace" }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap');`}</style>
 
-      {/* Header */}
       <header style={{ borderBottom: '1px solid #222', padding: '16px 24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
-          <div style={{ width: '28px', height: '28px', background: '#ff4d00', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontFamily: 'Syne, sans-serif' }}>C</div>
-          <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '18px', color: '#f0f0f0' }}>CVIFY</span>
+          <BrandLogo className="brand-shadow hidden h-10 w-auto sm:block" />
+          <BrandLogo compact className="brand-shadow h-10 w-10 sm:hidden" />
         </a>
         <span style={{ fontSize: '11px', color: '#444' }}>/ shared roast</span>
       </header>
 
       <div style={{ maxWidth: '640px', margin: '0 auto', padding: '40px 16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        {/* Shared banner */}
-        <div style={{ padding: '10px 14px', borderRadius: '8px', background: '#ff4d0011', border: '1px solid #ff4d0033', fontSize: '12px', color: '#ff4d00', textAlign: 'center' }}>
-          👁 You're viewing a shared resume roast — anonymous, no personal info shown
-          {roast.brutal_mode && <span style={{ marginLeft: '8px', background: '#ff4d0022', padding: '2px 8px', borderRadius: '4px' }}>🔥 BRUTAL MODE</span>}
+        <div style={{ padding: '10px 14px', borderRadius: '8px', background: '#ff4d0011', border: '1px solid #ff4d0033', fontSize: '12px', color: '#ff4d00', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <Eye size={14} />
+          <span>Shared roast view. Resume text stays hidden.</span>
+          {roast.brutal_mode && (
+            <span style={{ marginLeft: '8px', background: '#ff4d0022', padding: '2px 8px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <Flame size={12} />
+              Brutal Mode
+            </span>
+          )}
         </div>
 
-        {/* Score */}
-        <div style={{ border: '1px solid #222', background: '#111', borderRadius: '12px', padding: '24px', display: 'flex', alignItems: 'center', gap: '24px' }}>
+        <div style={{ border: '1px solid #222', background: '#111', borderRadius: '12px', padding: '24px', display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
           <ScoreRing score={score} />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
               <span style={{ fontSize: '11px', color: '#444', letterSpacing: '2px', textTransform: 'uppercase' }}>ATS Score</span>
-              <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px', background: scoreColor + '22', color: scoreColor, border: `1px solid ${scoreColor}33` }}>{label}</span>
+              <span style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px', background: scoreColor + '22', color: scoreColor, border: `1px solid ${scoreColor}33`, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <Trophy size={12} />
+                {label}
+              </span>
             </div>
             <p style={{ color: '#f0f0f0', fontSize: '16px', fontFamily: 'Syne, sans-serif', fontWeight: 700 }}>"{result.verdict}"</p>
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+        <div className="grid gap-4 sm:grid-cols-2">
           <Section title="Issues Found" items={result.issues || []} accent="red" />
           <Section title="How to Fix" items={result.fixes || []} accent="green" />
         </div>
 
         <Section title="Bullet Rewrites" items={result.rewrites || []} accent="orange" />
 
-        {/* CTA */}
         <div style={{ textAlign: 'center', padding: '24px 0' }}>
           <a href="/" style={{
-            display: 'inline-block', padding: '12px 28px', background: '#ff4d00', color: '#fff',
+            display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '12px 28px', background: '#ff4d00', color: '#fff',
             borderRadius: '8px', textDecoration: 'none', fontFamily: 'Syne, sans-serif',
             fontWeight: 700, fontSize: '14px'
           }}>
-            🔥 Roast your own resume →
+            Roast your own resume
+            <ArrowRight size={16} />
           </a>
         </div>
       </div>

@@ -1,4 +1,5 @@
 'use client'
+import { Flame, Trophy } from 'lucide-react'
 
 export default function VersionComparison({ versions, onClear }) {
   if (!versions || versions.length === 0) return null
@@ -51,8 +52,9 @@ export default function VersionComparison({ versions, onClear }) {
                     <div className="flex items-center gap-2">
                       <span>v{i + 1}</span>
                       {isBest && (
-                        <span className="text-xs px-2 py-0.5 rounded"
+                        <span className="text-xs px-2 py-0.5 rounded inline-flex items-center gap-1"
                           style={{ background: '#00e67622', color: '#00e676', border: '1px solid #00e67633' }}>
+                          <Trophy size={12} />
                           Best
                         </span>
                       )}
@@ -69,9 +71,10 @@ export default function VersionComparison({ versions, onClear }) {
                   </td>
                   <td className="py-3">
                     {v.brutal ? (
-                      <span className="text-xs px-2 py-0.5 rounded"
+                      <span className="text-xs px-2 py-0.5 rounded inline-flex items-center gap-1"
                         style={{ background: '#ff4d0022', color: '#ff4d00', border: '1px solid #ff4d0033' }}>
-                        🔥 Brutal
+                        <Flame size={12} />
+                        Brutal
                       </span>
                     ) : (
                       <span className="text-xs px-2 py-0.5 rounded"
