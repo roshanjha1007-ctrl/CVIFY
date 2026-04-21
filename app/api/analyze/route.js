@@ -2,7 +2,7 @@ import { Buffer } from 'node:buffer'
 import { NextResponse } from 'next/server'
 import { v4 as uuidv4 } from 'uuid'
 import connectDB from '@/lib/mongodb'
-import { analyzeResume } from '@/lib/analysis'
+import { analyzeResume, INTERNAL_VERSION_LABEL } from '@/lib/analysis'
 import { sendAnalysisEmail } from '@/lib/email'
 import AnalysisSession from '@/models/AnalysisSession'
 
@@ -23,11 +23,10 @@ export async function POST(request) {
     const jobDescription = String(formData.get('jobDescription') || '')
     const linkedInUrl = String(formData.get('linkedInUrl') || '')
     const email = String(formData.get('email') || '').trim().toLowerCase()
-    const versionLabel = String(formData.get('versionLabel') || '').trim()
     const file = formData.get('resumeFile')
 
     let resumeText = resumeTextInput.trim()
-    let resumeName = versionLabel || 'Resume Upload'
+    let resumeName = 'Resume Upload'
     let sourceType = 'text'
 
     if (file && typeof file === 'object' && typeof file.arrayBuffer === 'function' && file.size > 0) {
@@ -40,8 +39,18 @@ export async function POST(request) {
       }
 
       resumeText = (await parsePdf(file)).trim()
-      resumeName = versionLabel || file.name || 'Resume Upload'
+      resumeName = file.name || 'Resume Upload'
       sourceType = 'pdf'
+    }
+
+    if (!resumeText || !jobDescription.trim()) {
+      return NextResponse.json(
+        {
+          error: 'Missing input',
+          message: 'Resume or Job Description not provided',
+        },
+        { status: 400 }
+      )
     }
 
     if (!resumeText || resumeText.length < 80) {
@@ -55,10 +64,10 @@ export async function POST(request) {
       resumeText,
       jobDescription: jobDescription.trim(),
       linkedInUrl,
-      versionLabel,
-      email,
       resumeName,
     })
+
+    const { internal, ...publicAnalysis } = analysis
 
     const sessionId = uuidv4().replace(/-/g, '').slice(0, 16)
     let emailReport = null
@@ -66,52 +75,60 @@ export async function POST(request) {
     if (email) {
       emailReport = await sendAnalysisEmail({
         to: email,
-        analysis,
+        analysis: publicAnalysis,
         sessionId,
       })
     }
 
-    await connectDB()
+    let savedRecord = null
+    let history = []
 
-    const saved = await AnalysisSession.create({
-      session_id: sessionId,
-      email,
-      version_label: analysis.meta.versionLabel,
-      resume_name: resumeName,
-      source_type: sourceType,
-      resume_text: resumeText,
-      job_description: jobDescription.trim(),
-      linkedin_url: linkedInUrl,
-      linkedin_profile: analysis.linkedinProfile,
-      analysis_json: analysis,
-      email_report: emailReport,
-    })
+    try {
+      await connectDB()
 
-    const history = email
-      ? await AnalysisSession.find(
-          { email },
-          {
-            _id: 0,
-            session_id: 1,
-            version_label: 1,
-            resume_name: 1,
-            email: 1,
-            created_at: 1,
-            analysis_json: 1,
-          }
-        )
-          .sort({ created_at: -1 })
-          .limit(12)
-          .lean()
-      : []
+      savedRecord = await AnalysisSession.create({
+        session_id: sessionId,
+        email,
+        version_label: internal?.versionLabel || INTERNAL_VERSION_LABEL,
+        resume_name: resumeName,
+        source_type: sourceType,
+        resume_text: resumeText,
+        job_description: jobDescription.trim(),
+        linkedin_url: linkedInUrl,
+        linkedin_profile: null,
+        analysis_json: publicAnalysis,
+        email_report: emailReport,
+      })
+
+      history = email
+        ? await AnalysisSession.find(
+            { email },
+            {
+              _id: 0,
+              session_id: 1,
+              version_label: 1,
+              resume_name: 1,
+              email: 1,
+              created_at: 1,
+              analysis_json: 1,
+            }
+          )
+            .sort({ created_at: -1 })
+            .limit(12)
+            .lean()
+        : []
+    } catch (databaseError) {
+      console.warn('Analysis saved without database persistence:', databaseError.message)
+    }
 
     return NextResponse.json({
       session: {
-        sessionId: saved.session_id,
-        createdAt: saved.created_at,
+        sessionId,
+        createdAt: savedRecord?.created_at || new Date().toISOString(),
         emailReport,
+        persisted: Boolean(savedRecord),
       },
-      analysis,
+      analysis: publicAnalysis,
       history,
     })
   } catch (error) {

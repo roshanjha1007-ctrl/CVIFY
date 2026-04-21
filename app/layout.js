@@ -1,8 +1,8 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'CVify | AI Resume Optimization and Tracking',
-  description: 'Upload resume PDFs, compare against job descriptions, track ATS improvements, and send resume analysis reports by email.',
+  title: 'CVify | ATS Resume Analyzer',
+  description: 'Upload a PDF resume, compare it with a job description, and get a production-ready ATS score breakdown.',
 }
 
 export default function RootLayout({ children }) {
