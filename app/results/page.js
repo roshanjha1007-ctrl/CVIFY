@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, CheckCircle2, ChevronDown, ChevronUp, CircleAlert, Radar, Sparkles } from 'lucide-react'
 
 const RESULT_STORAGE_KEY = 'cvify:last-analysis'
+const SHOW_TECHNICAL_DETAILS_PANEL = false
 
 function getScoreLabel(score) {
   if (score < 40) return 'Weak'
@@ -249,28 +250,30 @@ export default function ResultsPage() {
           </section>
         </div>
 
-        <section className="dashboard-card p-6">
-          <button
-            type="button"
-            onClick={() => setShowTechnicalDetails((current) => !current)}
-            className="flex w-full items-center justify-between gap-4 text-left"
-          >
-            <div>
-              <p className="text-xs uppercase tracking-[0.22em] text-dim-foreground">Debug</p>
-              <h2 className="mt-2 text-lg font-semibold">View Technical Details</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Expand this if you want the raw structured output behind the analysis.
-              </p>
-            </div>
-            {showTechnicalDetails ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-          </button>
+        {SHOW_TECHNICAL_DETAILS_PANEL && (
+          <section className="dashboard-card p-6">
+            <button
+              type="button"
+              onClick={() => setShowTechnicalDetails((current) => !current)}
+              className="flex w-full items-center justify-between gap-4 text-left"
+            >
+              <div>
+                <p className="text-xs uppercase tracking-[0.22em] text-dim-foreground">Debug</p>
+                <h2 className="mt-2 text-lg font-semibold">View Technical Details</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Expand this if you want the raw structured output behind the analysis.
+                </p>
+              </div>
+              {showTechnicalDetails ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            </button>
 
-          {showTechnicalDetails && (
-            <pre className="mt-4 overflow-x-auto rounded-3xl bg-[#080808] p-4 text-xs leading-6 text-[#f3d8cc]">
-              {JSON.stringify(analysis.structuredJson || {}, null, 2)}
-            </pre>
-          )}
-        </section>
+            {showTechnicalDetails && (
+              <pre className="mt-4 overflow-x-auto rounded-3xl bg-[#080808] p-4 text-xs leading-6 text-[#f3d8cc]">
+                {JSON.stringify(analysis.structuredJson || {}, null, 2)}
+              </pre>
+            )}
+          </section>
+        )}
       </div>
     </main>
   )
