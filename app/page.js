@@ -2,10 +2,70 @@
 
 import { useEffect, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowRight, FileText, ScanSearch, Upload } from 'lucide-react'
+import { ArrowRight, Eraser, FileText, ScanSearch, Sparkles, Upload } from 'lucide-react'
 
 const DRAFT_STORAGE_KEY = 'cvify:analysis-draft'
 const RESULT_STORAGE_KEY = 'cvify:last-analysis'
+const MIN_RESUME_TEXT_LENGTH = 80
+const MIN_JOB_DESCRIPTION_LENGTH = 40
+const DEMO_DRAFT = {
+  resumeText: `PRIYA SHARMA
+Product Designer | Bangalore, India | priya.sharma@example.com | https://www.linkedin.com/in/priyasharma
+
+SUMMARY
+Product designer with 4+ years of experience designing SaaS workflows, design systems, and growth experiments for B2B products. Strong partner to product managers and engineers, with a track record of improving activation, task completion, and retention.
+
+EXPERIENCE
+Senior Product Designer | OrbitStack | 2023-Present
+- Redesigned onboarding for a workflow automation platform, improving activation by 18%.
+- Built a reusable component library in Figma that reduced design handoff time by 30%.
+- Ran usability tests and converted findings into prioritized product recommendations.
+
+Product Designer | LaunchPilot | 2021-2023
+- Led UX for analytics dashboards used by 8,000+ monthly users.
+- Partnered with engineering to ship responsive flows across desktop and mobile.
+- Collaborated with marketing on landing page experiments that improved trial conversions by 12%.
+
+SKILLS
+Figma, design systems, user research, wireframing, prototyping, usability testing, stakeholder communication, analytics`,
+  jobDescription: `Senior Product Designer
+
+We are hiring a Senior Product Designer to lead end-to-end design for our B2B SaaS platform. You will work closely with product managers and engineers to shape onboarding, analytics dashboards, and collaboration workflows.
+
+Requirements:
+- 3+ years of product design experience in SaaS
+- Strong design systems and prototyping skills
+- Experience running user research and usability testing
+- Ability to collaborate cross-functionally with product, engineering, and growth teams
+- Familiarity with analytics-driven experimentation and conversion optimization`,
+  linkedInUrl: 'https://www.linkedin.com/in/priyasharma',
+}
+
+function getCompletionState(value, minLength) {
+  const safeLength = value.trim().length
+
+  if (!safeLength) {
+    return {
+      label: 'Missing',
+      tone: 'muted',
+      detail: `Target ${minLength}+ chars`,
+    }
+  }
+
+  if (safeLength < minLength) {
+    return {
+      label: 'Needs more detail',
+      tone: 'warning',
+      detail: `${safeLength}/${minLength} chars`,
+    }
+  }
+
+  return {
+    label: 'Ready',
+    tone: 'success',
+    detail: `${safeLength} chars`,
+  }
+}
 
 export default function HomePage() {
   const router = useRouter()
@@ -40,13 +100,42 @@ export default function HomePage() {
     sessionStorage.setItem(DRAFT_STORAGE_KEY, payload)
   }, [resumeText, jobDescription, linkedInUrl])
 
+  const resumeState = getCompletionState(resumeText, MIN_RESUME_TEXT_LENGTH)
+  const jobState = getCompletionState(jobDescription, MIN_JOB_DESCRIPTION_LENGTH)
+  const linkedInState = linkedInUrl.trim()
+    ? { label: 'Added', tone: 'success', detail: 'Optional signal included' }
+    : { label: 'Optional', tone: 'muted', detail: 'Can be skipped' }
+  const resumeBulletCount = resumeText
+    .split('\n')
+    .filter((line) => line.trim().startsWith('-')).length
+  const requiredSkillCount = jobDescription
+    .split('\n')
+    .filter((line) => line.trim().startsWith('-')).length
+
+  function handleLoadDemo() {
+    setResumeFile(null)
+    setResumeText(DEMO_DRAFT.resumeText)
+    setJobDescription(DEMO_DRAFT.jobDescription)
+    setLinkedInUrl(DEMO_DRAFT.linkedInUrl)
+    setError('')
+  }
+
+  function handleClearDraft() {
+    setResumeFile(null)
+    setResumeText('')
+    setJobDescription('')
+    setLinkedInUrl('')
+    setError('')
+    sessionStorage.removeItem(DRAFT_STORAGE_KEY)
+  }
+
   async function handleAnalyze() {
-    if (!resumeFile && resumeText.trim().length < 80) {
+    if (!resumeFile && resumeText.trim().length < MIN_RESUME_TEXT_LENGTH) {
       setError('Upload a PDF resume or paste at least 80 characters of resume text.')
       return
     }
 
-    if (jobDescription.trim().length < 40) {
+    if (jobDescription.trim().length < MIN_JOB_DESCRIPTION_LENGTH) {
       setError('Paste a fuller job description so the ATS analysis has enough context.')
       return
     }
@@ -118,6 +207,48 @@ export default function HomePage() {
               </p>
             </div>
 
+            <div className="dashboard-card p-5">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="max-w-lg">
+                  <p className="text-xs uppercase tracking-[0.22em] text-dim-foreground">Demo Mode</p>
+                  <h2 className="mt-2 font-display text-2xl font-bold">Make the app feel alive in one click</h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Load a polished sample resume and matching role so contributors, reviewers, or recruiters can try the full flow immediately.
+                  </p>
+                </div>
+                <Sparkles className="shrink-0 text-[var(--accent)]" size={20} />
+              </div>
+
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+                <button type="button" onClick={handleLoadDemo} className="secondary-button justify-center">
+                  <Sparkles size={16} />
+                  <span>Load Demo Content</span>
+                </button>
+                <button type="button" onClick={handleClearDraft} className="ghost-button justify-center">
+                  <Eraser size={16} />
+                  <span>Clear Draft</span>
+                </button>
+              </div>
+
+              <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                <div className={`status-card status-card-${resumeState.tone}`}>
+                  <p className="text-xs uppercase tracking-[0.22em]">Resume</p>
+                  <p className="mt-2 text-sm font-semibold">{resumeState.label}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{resumeState.detail}</p>
+                </div>
+                <div className={`status-card status-card-${jobState.tone}`}>
+                  <p className="text-xs uppercase tracking-[0.22em]">Job Description</p>
+                  <p className="mt-2 text-sm font-semibold">{jobState.label}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{jobState.detail}</p>
+                </div>
+                <div className={`status-card status-card-${linkedInState.tone}`}>
+                  <p className="text-xs uppercase tracking-[0.22em]">LinkedIn</p>
+                  <p className="mt-2 text-sm font-semibold">{linkedInState.label}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{linkedInState.detail}</p>
+                </div>
+              </div>
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="dashboard-card p-5">
                 <p className="text-xs uppercase tracking-[0.22em] text-dim-foreground">Scoring Mix</p>
@@ -174,6 +305,10 @@ export default function HomePage() {
 
               <div>
                 <label className="field-label">Resume Text Fallback</label>
+                <div className="mb-3 flex items-center justify-between gap-3 text-xs text-dim-foreground">
+                  <span>Paste raw resume text if you do not want to upload a PDF.</span>
+                  <span>{resumeText.trim().length} chars</span>
+                </div>
                 <textarea
                   rows={7}
                   value={resumeText}
@@ -185,6 +320,10 @@ export default function HomePage() {
 
               <div>
                 <label className="field-label">Job Description</label>
+                <div className="mb-3 flex items-center justify-between gap-3 text-xs text-dim-foreground">
+                  <span>Include responsibilities, tools, and requirements for the best score.</span>
+                  <span>{jobDescription.trim().length} chars</span>
+                </div>
                 <textarea
                   rows={9}
                   value={jobDescription}
@@ -205,6 +344,30 @@ export default function HomePage() {
                     placeholder="https://www.linkedin.com/in/your-profile"
                     className="app-input pl-11"
                   />
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] p-4">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.22em] text-dim-foreground">Input Readiness</p>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Quick pre-flight checks before you send the analysis request.
+                    </p>
+                  </div>
+                  <ScanSearch className="text-[var(--accent)]" size={18} />
+                </div>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <div className="readiness-tile">
+                    <p className="text-xs uppercase tracking-[0.2em] text-dim-foreground">Resume Bullets</p>
+                    <p className="mt-2 text-2xl font-semibold">{resumeBulletCount}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Detected bullet-style achievement lines</p>
+                  </div>
+                  <div className="readiness-tile">
+                    <p className="text-xs uppercase tracking-[0.2em] text-dim-foreground">Role Requirements</p>
+                    <p className="mt-2 text-2xl font-semibold">{requiredSkillCount}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Bullet-style requirements found in the job post</p>
+                  </div>
                 </div>
               </div>
 

@@ -9,8 +9,9 @@ CVify is an AI-powered resume optimization and tracking app built with Next.js. 
 1. Upload one or more resume PDFs, or paste resume text manually.
 2. Paste a target job description.
 3. Optionally add a LinkedIn URL and email address.
-4. CVify parses the resume, scores ATS alignment, highlights missing skills, and stores the session.
-5. Review progress history, compare resume versions, and send reports by email.
+4. Use demo mode to instantly preload a sample resume and role if you want to preview the experience first.
+5. CVify parses the resume, scores ATS alignment, highlights missing skills, and stores the session.
+6. Review progress history, compare resume versions, and send reports by email.
 
 ## Features
 
@@ -18,6 +19,8 @@ CVify is an AI-powered resume optimization and tracking app built with Next.js. 
 - ATS compatibility scoring from `0-100`
 - Missing and matched skill detection against a job description
 - Resume improvement suggestions and rewrite prompts
+- One-click demo content for easier repo previews and first-run testing
+- Exportable ATS summaries with copy and download actions on the results screen
 - LinkedIn URL input with simulated profile extraction and consistency checks
 - Email report delivery through `nodemailer`
 - Saved analysis sessions in MongoDB

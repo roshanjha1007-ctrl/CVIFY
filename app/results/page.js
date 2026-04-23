@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, CheckCircle2, ChevronDown, ChevronUp, CircleAlert, Radar, Sparkles } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, ChevronDown, ChevronUp, CircleAlert, Copy, Download, Radar, Sparkles } from 'lucide-react'
 
 const RESULT_STORAGE_KEY = 'cvify:last-analysis'
 const SHOW_TECHNICAL_DETAILS_PANEL = false
@@ -36,6 +36,32 @@ function buildNextSteps(analysis) {
     improvements[0]?.message || 'Add one high-impact improvement from this report to your resume today.',
     'Re-run the analysis after editing so you can see whether the ATS score and missing-skill list improve.',
   ]
+}
+
+function buildShareSummary({ analysis, session, input, scoreLabel, summary, nextSteps }) {
+  const matchedSkills = Array.isArray(analysis?.matchedSkills) ? analysis.matchedSkills : []
+  const missingSkills = Array.isArray(analysis?.missingSkills) ? analysis.missingSkills : []
+  const improvements = Array.isArray(analysis?.improvementSuggestions) ? analysis.improvementSuggestions : []
+
+  return [
+    'CVify ATS Analysis Summary',
+    '',
+    `Score: ${analysis?.atsScore ?? 0} (${scoreLabel})`,
+    `Session: ${session?.sessionId || 'Not saved'}`,
+    `Source: ${input?.resumeFileName ? input.resumeFileName : 'Pasted resume text'}`,
+    '',
+    'Overview',
+    summary,
+    '',
+    `Matched skills: ${matchedSkills.length ? matchedSkills.join(', ') : 'None detected'}`,
+    `Missing skills: ${missingSkills.length ? missingSkills.join(', ') : 'None detected'}`,
+    '',
+    'Top improvements',
+    ...(improvements.length ? improvements.slice(0, 3).map((item, index) => `${index + 1}. ${item.message}`) : ['1. No suggestions generated for this run.']),
+    '',
+    'Next steps',
+    ...nextSteps.map((step, index) => `${index + 1}. ${step}`),
+  ].join('\n')
 }
 
 function ScoreBar({ label, value }) {
@@ -82,6 +108,7 @@ export default function ResultsPage() {
   const router = useRouter()
   const [payload, setPayload] = useState(null)
   const [showTechnicalDetails, setShowTechnicalDetails] = useState(false)
+  const [shareMessage, setShareMessage] = useState('')
 
   useEffect(() => {
     try {
@@ -125,6 +152,36 @@ export default function ResultsPage() {
     analysis.structuredJson?.summary ||
     analysis.similarityExplanation ||
     'Your resume has some alignment with the role, but there are still a few important gaps to close.'
+  const shareSummary = buildShareSummary({
+    analysis,
+    session,
+    input,
+    scoreLabel,
+    summary,
+    nextSteps,
+  })
+
+  async function handleCopySummary() {
+    try {
+      await navigator.clipboard.writeText(shareSummary)
+      setShareMessage('Summary copied. You can paste it into GitHub, email, or notes.')
+    } catch {
+      setShareMessage('Clipboard access failed in this browser. Try downloading the report instead.')
+    }
+  }
+
+  function handleDownloadReport() {
+    const blob = new Blob([shareSummary], { type: 'text/plain;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    const sessionId = session?.sessionId || 'analysis'
+
+    link.href = url
+    link.download = `cvify-${sessionId}.txt`
+    link.click()
+    URL.revokeObjectURL(url)
+    setShareMessage('Report downloaded as a text summary.')
+  }
 
   return (
     <main className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
@@ -135,10 +192,23 @@ export default function ResultsPage() {
             <h1 className="mt-2 font-display text-3xl font-extrabold sm:text-4xl">ATS analysis dashboard</h1>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{summary}</p>
           </div>
-          <button type="button" onClick={() => router.push('/')} className="secondary-button">
-            <ArrowLeft size={16} />
-            <span>Back to Home</span>
-          </button>
+          <div className="flex flex-col gap-3 sm:items-end">
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <button type="button" onClick={handleCopySummary} className="secondary-button">
+                <Copy size={16} />
+                <span>Copy Summary</span>
+              </button>
+              <button type="button" onClick={handleDownloadReport} className="ghost-button">
+                <Download size={16} />
+                <span>Download Report</span>
+              </button>
+              <button type="button" onClick={() => router.push('/')} className="secondary-button">
+                <ArrowLeft size={16} />
+                <span>Back to Home</span>
+              </button>
+            </div>
+            {shareMessage && <p className="text-sm text-muted-foreground">{shareMessage}</p>}
+          </div>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
@@ -177,6 +247,23 @@ export default function ResultsPage() {
               <ScoreBar label="Semantic similarity" value={breakdown.semanticSimilarity} />
               <ScoreBar label="Structure" value={breakdown.structure} />
               <ScoreBar label="Clarity" value={breakdown.clarity} />
+            </div>
+
+            <div className="export-panel mt-8">
+              <p className="text-xs uppercase tracking-[0.22em] text-dim-foreground">Shareable Report</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Turn this analysis into a portable summary for applications, issue threads, or quick progress snapshots.
+              </p>
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                <button type="button" onClick={handleCopySummary} className="secondary-button">
+                  <Copy size={16} />
+                  <span>Copy Text Summary</span>
+                </button>
+                <button type="button" onClick={handleDownloadReport} className="ghost-button">
+                  <Download size={16} />
+                  <span>Save .txt Report</span>
+                </button>
+              </div>
             </div>
           </section>
 
