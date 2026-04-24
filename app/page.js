@@ -190,45 +190,37 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl items-center">
-        <div className="grid w-full gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-          <section className="space-y-6">
+    <main className="min-h-screen px-4 py-5 sm:px-5 sm:py-6 lg:px-6 lg:py-4 xl:px-8">
+      <div className="pointer-events-none fixed right-4 top-4 z-10 hidden rounded-[28px] border border-white/6 bg-white/[0.02] p-3 opacity-70 blur-[0.2px] sm:block lg:right-6 lg:top-6">
+        <Image
+          src="/cvify-mark.svg"
+          alt="CVify logo"
+          width={40}
+          height={40}
+          className="h-10 w-10 opacity-80"
+        />
+      </div>
+      <div className="relative mx-auto flex min-h-[calc(100vh-2.5rem)] w-full max-w-[1680px] items-start lg:items-center">
+        <div className="grid w-full gap-5 lg:grid-cols-[0.78fr_1.22fr] xl:grid-cols-[0.74fr_1.26fr] 2xl:grid-cols-[0.72fr_1.28fr]">
+          <section className="space-y-4 lg:space-y-3">
             <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs uppercase tracking-[0.24em] subtle-chip">
               <ScanSearch size={14} />
               ATS Resume Analyzer
             </div>
-            <div className="relative space-y-4 overflow-hidden">
-              <div className="pointer-events-none absolute -left-3 -top-5 hidden rounded-[28px] border border-white/6 bg-white/[0.02] p-3 opacity-70 blur-[0.2px] sm:block">
-                <Image
-                  src="/cvify-mark.svg"
-                  alt="CVify logo"
-                  width={40}
-                  height={40}
-                  className="h-10 w-10 opacity-80"
-                />
-              </div>
-              <h1 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
-                Upload a resume, paste a role, and get a real ATS score.
-              </h1>
-              <p className="max-w-xl text-sm leading-6 text-muted-foreground">
-                Fast ATS match insights.
-              </p>
-            </div>
 
-            <div className="dashboard-card p-5">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="dashboard-card p-5 lg:p-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="max-w-lg">
                   <p className="text-xs uppercase tracking-[0.22em] text-dim-foreground">Demo Mode</p>
-                  <h2 className="mt-2 font-display text-2xl font-bold">Make the app feel alive in one click</h2>
-                  <p className="mt-2 text-sm text-muted-foreground">
+                  <h2 className="mt-2 font-display text-2xl font-bold leading-tight lg:text-[2rem]">Make the app feel alive in one click</h2>
+                  <p className="mt-2 text-sm text-muted-foreground lg:text-[0.9rem]">
                     Try the sample flow.
                   </p>
                 </div>
                 <Sparkles className="shrink-0 text-[var(--accent)]" size={20} />
               </div>
 
-              <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row">
                 <button type="button" onClick={handleLoadDemo} className="secondary-button justify-center">
                   <Sparkles size={16} />
                   <span>Load Demo Content</span>
@@ -239,7 +231,7 @@ export default function HomePage() {
                 </button>
               </div>
 
-              <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 <div className={`status-card status-card-${resumeState.tone}`}>
                   <p className="text-xs uppercase tracking-[0.22em]">Resume</p>
                   <p className="mt-2 text-sm font-semibold">{resumeState.label}</p>
@@ -258,19 +250,19 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="dashboard-card p-5">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="dashboard-card p-5 lg:p-4">
                 <p className="text-xs uppercase tracking-[0.22em] text-dim-foreground">Scoring Mix</p>
-                <div className="mt-4 space-y-2 text-sm text-muted-foreground">
+                <div className="mt-3 space-y-2 text-sm text-muted-foreground">
                   <p>Keyword match: 40%</p>
                   <p>Semantic similarity: 30%</p>
                   <p>Structure: 15%</p>
                   <p>Clarity: 15%</p>
                 </div>
               </div>
-              <div className="dashboard-card p-5">
+              <div className="dashboard-card p-5 lg:p-4">
                 <p className="text-xs uppercase tracking-[0.22em] text-dim-foreground">Output</p>
-                <div className="mt-4 space-y-2 text-sm text-muted-foreground">
+                <div className="mt-3 space-y-2 text-sm text-muted-foreground">
                   <p>ATS score snapshot</p>
                   <p>Matched and missing skills</p>
                   <p>Improvement suggestions</p>
@@ -280,8 +272,8 @@ export default function HomePage() {
             </div>
           </section>
 
-          <section className="dashboard-card p-6 sm:p-8">
-            <div className="space-y-6">
+          <section className="dashboard-card p-5 sm:p-6 lg:p-5 xl:p-6">
+            <div className="space-y-5 lg:space-y-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.24em] text-dim-foreground">Home</p>
                 <h2 className="mt-2 font-display text-2xl font-bold">Analyze Resume</h2>
@@ -290,7 +282,8 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <label className="upload-zone block cursor-pointer rounded-3xl border border-dashed p-5 transition">
+              <div className="grid gap-4 lg:grid-cols-2">
+                <label className="upload-zone block cursor-pointer rounded-3xl border border-dashed p-5 transition lg:col-span-2 lg:p-4">
                 <div className="flex items-start gap-4">
                   <div className="rounded-2xl bg-[var(--accent-dim)] p-3 text-[var(--accent)]">
                     <Upload size={18} />
@@ -303,78 +296,79 @@ export default function HomePage() {
                     <input
                       type="file"
                       accept="application/pdf"
-                      className="mt-4 block w-full text-sm text-muted-foreground"
+                      className="mt-3 block w-full text-sm text-muted-foreground"
                       onChange={(event) => setResumeFile(event.target.files?.[0] || null)}
                     />
                     {resumeFile && <p className="mt-3 text-sm text-[var(--accent)]">{resumeFile.name}</p>}
                   </div>
                 </div>
-              </label>
+                </label>
 
-              <div>
-                <label className="field-label">Resume Text Fallback</label>
-                <div className="mb-3 flex items-center justify-between gap-3 text-xs text-dim-foreground">
-                  <span>Paste instead of PDF.</span>
-                  <span>{resumeText.trim().length} chars</span>
-                </div>
-                <textarea
-                  rows={7}
-                  value={resumeText}
-                  onChange={(event) => setResumeText(event.target.value)}
-                  placeholder="Paste resume text here if you do not want to upload a PDF."
-                  className="app-textarea"
-                />
-              </div>
-
-              <div>
-                <label className="field-label">Job Description</label>
-                <div className="mb-3 flex items-center justify-between gap-3 text-xs text-dim-foreground">
-                  <span>Paste target job details.</span>
-                  <span>{jobDescription.trim().length} chars</span>
-                </div>
-                <textarea
-                  rows={9}
-                  value={jobDescription}
-                  onChange={(event) => setJobDescription(event.target.value)}
-                  placeholder="Paste the target role, responsibilities, and requirements."
-                  className="app-textarea"
-                />
-              </div>
-
-              <div>
-                <label className="field-label">LinkedIn URL Optional</label>
-                <div className="relative">
-                  <FileText className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-dim-foreground" size={16} />
-                  <input
-                    type="url"
-                    value={linkedInUrl}
-                    onChange={(event) => setLinkedInUrl(event.target.value)}
-                    placeholder="https://www.linkedin.com/in/your-profile"
-                    className="app-input pl-11"
+                <div>
+                  <label className="field-label">Resume Text Fallback</label>
+                  <div className="mb-3 flex items-center justify-between gap-3 text-xs text-dim-foreground">
+                    <span>Paste instead of PDF.</span>
+                    <span>{resumeText.trim().length} chars</span>
+                  </div>
+                  <textarea
+                    rows={5}
+                    value={resumeText}
+                    onChange={(event) => setResumeText(event.target.value)}
+                    placeholder="Paste resume text here if you do not want to upload a PDF."
+                    className="app-textarea compact-textarea"
                   />
                 </div>
-              </div>
 
-              <div className="rounded-3xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] p-4">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.22em] text-dim-foreground">Input Readiness</p>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Ready to analyze.
-                    </p>
+                <div>
+                  <label className="field-label">Job Description</label>
+                  <div className="mb-3 flex items-center justify-between gap-3 text-xs text-dim-foreground">
+                    <span>Paste target job details.</span>
+                    <span>{jobDescription.trim().length} chars</span>
                   </div>
-                  <ScanSearch className="text-[var(--accent)]" size={18} />
+                  <textarea
+                    rows={5}
+                    value={jobDescription}
+                    onChange={(event) => setJobDescription(event.target.value)}
+                    placeholder="Paste the target role, responsibilities, and requirements."
+                    className="app-textarea compact-textarea"
+                  />
                 </div>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <div className="readiness-tile">
-                    <p className="text-xs uppercase tracking-[0.2em] text-dim-foreground">Resume Bullets</p>
-                    <p className="mt-2 text-2xl font-semibold">{resumeBulletCount}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Bullet lines found.</p>
+
+                <div>
+                  <label className="field-label">LinkedIn URL Optional</label>
+                  <div className="relative">
+                    <FileText className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-dim-foreground" size={16} />
+                    <input
+                      type="url"
+                      value={linkedInUrl}
+                      onChange={(event) => setLinkedInUrl(event.target.value)}
+                      placeholder="https://www.linkedin.com/in/your-profile"
+                      className="app-input pl-11"
+                    />
                   </div>
-                  <div className="readiness-tile">
-                    <p className="text-xs uppercase tracking-[0.2em] text-dim-foreground">Role Requirements</p>
-                    <p className="mt-2 text-2xl font-semibold">{requiredSkillCount}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Requirements bullets found.</p>
+                </div>
+
+                <div className="rounded-3xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)] p-4 lg:p-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.22em] text-dim-foreground">Input Readiness</p>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Ready to analyze.
+                      </p>
+                    </div>
+                    <ScanSearch className="text-[var(--accent)]" size={18} />
+                  </div>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    <div className="readiness-tile">
+                      <p className="text-xs uppercase tracking-[0.2em] text-dim-foreground">Resume Bullets</p>
+                      <p className="mt-2 text-2xl font-semibold">{resumeBulletCount}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">Bullet lines found.</p>
+                    </div>
+                    <div className="readiness-tile">
+                      <p className="text-xs uppercase tracking-[0.2em] text-dim-foreground">Role Requirements</p>
+                      <p className="mt-2 text-2xl font-semibold">{requiredSkillCount}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">Requirements bullets found.</p>
+                    </div>
                   </div>
                 </div>
               </div>
