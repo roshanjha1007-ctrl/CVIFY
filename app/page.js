@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowRight, Eraser, FileText, ScanSearch, Sparkles, Upload } from 'lucide-react'
@@ -48,7 +49,7 @@ function getCompletionState(value, minLength) {
     return {
       label: 'Missing',
       tone: 'muted',
-      detail: `Target ${minLength}+ chars`,
+      detail: `${minLength}+ chars`,
     }
   }
 
@@ -103,8 +104,8 @@ export default function HomePage() {
   const resumeState = getCompletionState(resumeText, MIN_RESUME_TEXT_LENGTH)
   const jobState = getCompletionState(jobDescription, MIN_JOB_DESCRIPTION_LENGTH)
   const linkedInState = linkedInUrl.trim()
-    ? { label: 'Added', tone: 'success', detail: 'Optional signal included' }
-    : { label: 'Optional', tone: 'muted', detail: 'Can be skipped' }
+    ? { label: 'Added', tone: 'success', detail: 'Link added' }
+    : { label: 'Optional', tone: 'muted', detail: 'Skip if needed' }
   const resumeBulletCount = resumeText
     .split('\n')
     .filter((line) => line.trim().startsWith('-')).length
@@ -197,13 +198,21 @@ export default function HomePage() {
               <ScanSearch size={14} />
               ATS Resume Analyzer
             </div>
-            <div className="space-y-4">
+            <div className="relative space-y-4 overflow-hidden">
+              <div className="pointer-events-none absolute -left-3 -top-5 hidden rounded-[28px] border border-white/6 bg-white/[0.02] p-3 opacity-70 blur-[0.2px] sm:block">
+                <Image
+                  src="/cvify-mark.svg"
+                  alt="CVify logo"
+                  width={40}
+                  height={40}
+                  className="h-10 w-10 opacity-80"
+                />
+              </div>
               <h1 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
                 Upload a resume, paste a role, and get a real ATS score.
               </h1>
               <p className="max-w-xl text-sm leading-6 text-muted-foreground">
-                CVify extracts PDF text, matches job keywords with exact, fuzzy, and semantic checks, and returns a clean
-                hiring-style breakdown with suggestions you can act on immediately.
+                Fast ATS match insights.
               </p>
             </div>
 
@@ -213,7 +222,7 @@ export default function HomePage() {
                   <p className="text-xs uppercase tracking-[0.22em] text-dim-foreground">Demo Mode</p>
                   <h2 className="mt-2 font-display text-2xl font-bold">Make the app feel alive in one click</h2>
                   <p className="mt-2 text-sm text-muted-foreground">
-                    Load a polished sample resume and matching role so contributors, reviewers, or recruiters can try the full flow immediately.
+                    Try the sample flow.
                   </p>
                 </div>
                 <Sparkles className="shrink-0 text-[var(--accent)]" size={20} />
@@ -277,8 +286,7 @@ export default function HomePage() {
                 <p className="text-xs uppercase tracking-[0.24em] text-dim-foreground">Home</p>
                 <h2 className="mt-2 font-display text-2xl font-bold">Analyze Resume</h2>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Upload a PDF resume for extraction, or use pasted text as a fallback. LinkedIn is optional and will not
-                  block analysis.
+                  Upload resume and job.
                 </p>
               </div>
 
@@ -290,7 +298,7 @@ export default function HomePage() {
                   <div className="flex-1">
                     <p className="font-semibold">Resume PDF</p>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Upload one PDF up to 5MB. The analyzer extracts text on the backend before scoring.
+                      One PDF, max 5MB.
                     </p>
                     <input
                       type="file"
@@ -306,7 +314,7 @@ export default function HomePage() {
               <div>
                 <label className="field-label">Resume Text Fallback</label>
                 <div className="mb-3 flex items-center justify-between gap-3 text-xs text-dim-foreground">
-                  <span>Paste raw resume text if you do not want to upload a PDF.</span>
+                  <span>Paste instead of PDF.</span>
                   <span>{resumeText.trim().length} chars</span>
                 </div>
                 <textarea
@@ -321,7 +329,7 @@ export default function HomePage() {
               <div>
                 <label className="field-label">Job Description</label>
                 <div className="mb-3 flex items-center justify-between gap-3 text-xs text-dim-foreground">
-                  <span>Include responsibilities, tools, and requirements for the best score.</span>
+                  <span>Paste target job details.</span>
                   <span>{jobDescription.trim().length} chars</span>
                 </div>
                 <textarea
@@ -352,7 +360,7 @@ export default function HomePage() {
                   <div>
                     <p className="text-xs uppercase tracking-[0.22em] text-dim-foreground">Input Readiness</p>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      Quick pre-flight checks before you send the analysis request.
+                      Ready to analyze.
                     </p>
                   </div>
                   <ScanSearch className="text-[var(--accent)]" size={18} />
@@ -361,12 +369,12 @@ export default function HomePage() {
                   <div className="readiness-tile">
                     <p className="text-xs uppercase tracking-[0.2em] text-dim-foreground">Resume Bullets</p>
                     <p className="mt-2 text-2xl font-semibold">{resumeBulletCount}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Detected bullet-style achievement lines</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Bullet lines found.</p>
                   </div>
                   <div className="readiness-tile">
                     <p className="text-xs uppercase tracking-[0.2em] text-dim-foreground">Role Requirements</p>
                     <p className="mt-2 text-2xl font-semibold">{requiredSkillCount}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">Bullet-style requirements found in the job post</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Requirements bullets found.</p>
                   </div>
                 </div>
               </div>
